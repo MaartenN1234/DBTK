@@ -1,0 +1,26 @@
+SQL Screen
+
+
+
+
+Main Screen
+
+Table Screen
++ Code
+
+Conv Screen
++ Code
++ Implied code
+
+View Screen
++ Code
++ Implied code
+
+TABLE lists in SQL Screen
+  ?Editability table Aliasses
+  Add table.*
+
+
+Connection Screen
+
+
