@@ -7,14 +7,19 @@ import java.sql.SQLException;
 
 public class SQLConnectionStatics {
 	private static SQLConnectionStatics sqlStaticsStorage = new SQLConnectionStatics();
+	private static int TIMEOUT = 5;
 
-	private String host    = "adora11.ortec.finance";
+	private String host    = "localhost";
 	private String port    = "1521";
-	private String service = "ORA11";
-	private String user    = "PEARL621_PLAY1_PUB";
-	private String pass    = "PEARL621_PLAY1_PUB";
+	private String service = "XE";
+	private String user    = "XE";
+	private String pass    = "XE";
 	
 	private Connection conn = null;
+
+	static{
+		DriverManager.setLoginTimeout(TIMEOUT);
+	}
 
 	private SQLConnectionStatics(){
 	}
@@ -26,9 +31,9 @@ public class SQLConnectionStatics {
 		}
 		return conn;
 	}
-	private void setConnectionParametersS(String host, String port,	String service, String user, String pass) {
+	private void setConnectionParametersS(String host, int port,	String service, String user, String pass) {
 		this.host    = host;
-		this.port    = port;
+		this.port    = ""+port;
 		this.service = service;
 		this.user    = user;
 		this.pass    = pass;
@@ -73,7 +78,7 @@ public class SQLConnectionStatics {
 	public static void closePoolConnection(){
 		sqlStaticsStorage.closePoolConnectionS();
 	}
-	public static void setConnectionParameters(String host, String port, String service, String user, String pass){
+	public static void setConnectionParameters(String host, int port, String service, String user, String pass){
 		sqlStaticsStorage.setConnectionParametersS(host, port, service, user, pass);
 	}
 	
@@ -90,5 +95,4 @@ public class SQLConnectionStatics {
 		prepareStatement.close();
 
 	}
-
 }

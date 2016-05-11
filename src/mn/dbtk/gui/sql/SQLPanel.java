@@ -4,25 +4,25 @@ import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 
+import mn.dbtk.gui.generics.IconProvider;
 import mn.dbtk.gui.generics.MyTextAreaBase;
-import mn.dbtk.sql.DBObjectCache;
 import mn.dbtk.sql.ParsedSQLStatement;
 import mn.dbtk.sql.ParseSQLHelper;
 import mn.dbtk.sql.SQLConnectionStatics;
-import mn.dbtk.sql.ParsedSQLStatement.SelectEntry;
+import mn.dbtk.sql.dbcache.DBObjectCache;
 
 
-public class SQLPanel extends JPanel  implements KeyListener{
+public class SQLPanel extends JPanel  implements CaretListener{
 	public static final Insets NO_INSETS = new Insets(0,0,0,0);
 	
 	private static final int DEFAULT_MAX_OUTPUT_ROWS = 25;
@@ -68,10 +68,10 @@ public class SQLPanel extends JPanel  implements KeyListener{
 		sqlAreaWhere  = new MyTextAreaBase("",GUI_WHERE_RATIO,0);	
 		filterSQLArea = new MyTextAreaBase("",GUI_FILTER_RATIO,0);
 
-		sqlAreaSelect.addKeyListener(this);
-		sqlAreaFrom.addKeyListener(this);
-		sqlAreaWhere.addKeyListener(this);
-		filterSQLArea.addKeyListener(this);
+		sqlAreaSelect.addCaretListener(this);
+		sqlAreaFrom.addCaretListener(this);
+		sqlAreaWhere.addCaretListener(this);
+		filterSQLArea.addCaretListener(this);
 		
 		sqlTableGui = new SQLRowSourcePanel(this);
 		
@@ -194,9 +194,10 @@ public class SQLPanel extends JPanel  implements KeyListener{
 		return result;
 	}
 
-	private JComponent initGUIGetTopButtons() {		
-		JButton naturalDateJoinButton = new JButton("date-join");
-		JButton naturalFullJoinButton = new JButton("full-join");
+	private JComponent initGUIGetTopButtons() {	
+		
+		JButton naturalDateJoinButton = IconProvider.getButton("datejoin", "<HTML>Autocreate join conditions<BR>for all date columns.</HTML>");
+		JButton naturalFullJoinButton = IconProvider.getButton("equijoin", "<HTML>Autocreate full join conditions<BR>for all columns with equal<BR>names and all date columns.</HTML>");
 		
 		naturalDateJoinButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
@@ -462,16 +463,8 @@ public class SQLPanel extends JPanel  implements KeyListener{
 		SimpleDateFormat fmTS  = new SimpleDateFormat("HH:mm:ss");
 		return fmTS.format(new Date());
 	}		
-	public void keyTyped(KeyEvent e) {
-		setKeyStroke();
-	}
-	public void keyPressed(KeyEvent e) {
-		setKeyStroke();
-	}
-	public void keyReleased(KeyEvent e) {
-		setKeyStroke();
-	}
-	private void setKeyStroke(){
+	
+	public void caretUpdate(CaretEvent e) {
 		if (keyStrokeTimerThread == null || keyStrokeTimerThread.completed){
 			keyStrokeTimerThread = new KeyStrokeTimerThread();
 			keyStrokeTimerThread.start();

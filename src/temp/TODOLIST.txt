@@ -1,12 +1,14 @@
-SQL Screen
-
-
-
 
 Main Screen
+   
+  Trashed Objects overview
 
-Table Screen
-+ Code
+  Object Search
+  
+
+Internal Table Screen (2)
+  + Indices
++ Code generation
 
 Conv Screen
 + Code
@@ -16,11 +18,11 @@ View Screen
 + Code
 + Implied code
 
-TABLE lists in SQL Screen
-  ?Editability table Aliasses
-  Add table.*
+SQL Screen
+  TABLE lists in SQL Screen
+    ?Editability table Aliasses
+    Add table.*
 
 
-Connection Screen
 
 

@@ -1,6 +1,12 @@
 package mn.dbtk.programobjects;
 
+import java.util.List;
 import java.util.Map;
+
+import javax.swing.Icon;
+
+import mn.dbtk.gui.generics.IconProvider;
+import mn.dbtk.gui.programobjects.AbstractPOPanel;
 
 public class DBViewProgramObject extends AbstractProgramObject {
 
@@ -41,11 +47,25 @@ public class DBViewProgramObject extends AbstractProgramObject {
 			throw new StoredObjectParseException("Unknown version number "+version); 
 		}
 		
-		specificInitFromLineFileV1(parsedHead, body);
+		specificInitFromLineFileV1Body(body);
 	}
 
-	private void specificInitFromLineFileV1(Map<String, String> parsedHead, String body) {
+	private void specificInitFromLineFileV1Body(String body) {
 		selectSQL   = body;		
+	}
 
+	public Icon getIcon() {
+		return IconProvider.get(isValid() ? "view" : "view_invalid");
+	}
+
+	protected AbstractPOPanel<? extends AbstractProgramObject> createEditScreen() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void fillObjectInvalidStatusMessages(List<String> result) {
+		// TODO Auto-generated method stub
+		
 	}
 }

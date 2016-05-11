@@ -1,34 +1,48 @@
-package mn.dbtk.sql;
+package mn.dbtk.sql.dbcache;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Logger;
+
+import javax.swing.SwingUtilities;
 
 import mn.dbtk.util.MultiSet;
 
-public class DBObjectCache {
-	private Map<String, DBObjectsModelRowSource> internalCache;
+class DBObjectCacheDeamon extends Thread {
 	private static final boolean PERFORMANCE_OUTPUT = false;
-	private Thread reloadThread;
-	public  String lastException;
+	private static final int     WAIT_CYCLE_SECONDS = 30;
 	
-	private static final List<String> basicAggregateFunctions = Arrays.asList(new String[]
-			{"SUM", "MIN", "MAX", "STDEV", "AVG", "COUNT", "MEDIAN"});
-
-	public List<String> aggregateFunctions;
-
+	private DBObjectCache cache;
 	
-	public static DBObjectCache cache = new DBObjectCache();
-	
-	private DBObjectCache(){
-		aggregateFunctions = new ArrayList<String>(basicAggregateFunctions);
+	DBObjectCacheDeamon(DBObjectCache cache){
+		this.cache = cache;
+		setDaemon(true);
 	}
 	
-	public void fillCache(){
+	public void run (){
+		while (true){
+			try{
+				Thread.sleep(WAIT_CYCLE_SECONDS*1000);
+				determineCache();
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			    return;
+			} catch(Exception e){
+				Logger.getGlobal().severe("Cache loader daemon exception " + e);
+			} 
+		}
+	}
+	
+	
+	void determineCache(){
+		Map<String, DBObjectsModelRowSource> internalCache;
+		Set<String> aggregateFunctions;
+		String lastException = null;
+		
 		long l = System.currentTimeMillis();		
 		
 		final String objectFilterClause = "AND <?>.TABLE_NAME NOT LIKE 'TMP!_%' ESCAPE '!' " +
@@ -76,7 +90,11 @@ public class DBObjectCache {
 			if(refLoader.exceptionMessage!= null)
 				lastException = refLoader.exceptionMessage;
 			if(utcLoader.exceptionMessage!= null)
-				lastException = utcLoader.exceptionMessage;			
+				lastException = utcLoader.exceptionMessage;		
+			if(aFcLoader.exceptionMessage!= null)
+				lastException = aFcLoader.exceptionMessage;		
+			
+			cache.loadCompleted(null, null, lastException);
 			return;
 		}
 
@@ -144,7 +162,7 @@ public class DBObjectCache {
 						
 			int    columnID   = Integer.parseInt(ss[4]);
 
-			DBObjectsModelColumn c = new DBObjectsModelColumn(ss[1], ss[2], ss[3].equals("Y"));
+			DBObjectsModelColumn c = new DBObjectsModelColumn(ss[1], ss[2], ss[3].equals("Y")?1:0);
 			
 			if (columnID< rowSource.columns.size()){
 				rowSource.columns.set(columnID-1, c);
@@ -180,58 +198,14 @@ public class DBObjectCache {
 		}
 		
 		// Load Aggregate functions
-		aggregateFunctions = new ArrayList<String>(basicAggregateFunctions);
+		aggregateFunctions = new HashSet<String>(DBObjectCache.basicAggregateFunctions);
 		for (String [] ss: aFcLoader.getResults())
 			aggregateFunctions.add(ss[0]);
 		
 		
 		if (PERFORMANCE_OUTPUT)
 			System.out.println("FINAL: "+(System.currentTimeMillis()-l));
-
-	}
-	private synchronized void ensureCacheExists(){
-		if (internalCache==null){
-			fillCache();
-		}
-	}
-	public boolean isLoaded(boolean forceLoad){
-		if (forceLoad)
-			ensureCacheExists();
-		return internalCache!=null;
-	}
-	
-	public DBObjectsModelRowSource getCache(String rowSourceName){
-		ensureCacheExists();
-		return internalCache.get(rowSourceName);
-	}
-	public Set<String> getAllRowSources(){
-		ensureCacheExists();
-		return internalCache.keySet();
-	}	
-	
-	public void clearCache(boolean startReload){
-		if (reloadThread != null && reloadThread.isAlive())
-			reloadThread.interrupt();
 		
-		synchronized (this){
-			internalCache = null;
-			
-			if (startReload)
-				startLoad();
-		}
-	}
-	
-	public void startLoad(){
-		if (internalCache == null){
-			if (reloadThread != null && reloadThread.isAlive())
-				reloadThread.interrupt();
-			
-			reloadThread = new Thread(){
-				public void run(){
-					ensureCacheExists();
-				}
-			};
-			reloadThread.start();
-		}
+		cache.loadCompleted(internalCache, aggregateFunctions, lastException);
 	}
 }

@@ -1,4 +1,4 @@
-package mn.dbtk.sql;
+package mn.dbtk.sql.dbcache;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,18 +7,22 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import mn.dbtk.sql.SQLConnectionStatics;
 
-public class StringResultSetLoaderThread extends Thread{
+
+class StringResultSetLoaderThread extends Thread{
 	private String  sql;
-	public  String  exceptionMessage;
 	private boolean normalCompletion;
 	private List<String[]> results;
 	private Connection        conn;
 	private PreparedStatement ps;
 	
+	String  exceptionMessage;
+	
 	StringResultSetLoaderThread(String sql){
 		this.sql = sql;
 		normalCompletion=false;
+		setDaemon(true);
 	}
 	
 	private void processResultSet(ResultSet rs) throws SQLException{
@@ -49,7 +53,6 @@ public class StringResultSetLoaderThread extends Thread{
 			exceptionMessage = e.getMessage();
 			if (ps != null) try{ps.close();} catch(SQLException e2){}
 			if (conn != null) try{conn.close();} catch(SQLException e2){}
-			throw new RuntimeException(exceptionMessage);
 		}
 	}
 	public boolean sync(){

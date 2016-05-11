@@ -1,25 +1,35 @@
 package mn.dbtk.programobjects;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.JTabbedPane;
 
-public abstract class AbstractProgramObject {
-	protected final static String blockMarkerStart = "\r\n#9(}z~@";
-	private   final static String commentsMarker   = blockMarkerStart + "START comments\r\n";
-	private   final static String endMarker        = blockMarkerStart + "ENDDEF AbstractPO\r\n";
-	protected final static String subMarker1       = blockMarkerStart + "1\r\n";
-	protected final static String subMarker2       = blockMarkerStart + "2\r\n";
-	protected final static String subMarker3       = blockMarkerStart + "3\r\n";
-	protected final static String subMarker4       = blockMarkerStart + "4\r\n";
-	protected final static String subMarker5       = blockMarkerStart + "5\r\n";
-	
+import mn.dbtk.config.Configuration;
+import mn.dbtk.gui.main.MainWindow;
+import mn.dbtk.gui.objecttree.ProgramObjectNode;
+import mn.dbtk.gui.objecttree.TreeObjectPanel;
+import mn.dbtk.gui.programobjects.AbstractPOPanel;
+
+
+public abstract class AbstractProgramObject{
+	// Representation
 	public  String  location = "/";
 	public  String  name;
 	public  String  uid;
 	public  String  comments;
-	String  classType;
 	public  boolean deleted;
+	String  classType;
+	
+	private String lastSavedFile;
+	
+	// Gui cache
+	private transient ProgramObjectNode objectTreeNode;
+	private transient AbstractPOPanel<? extends AbstractProgramObject> editScreen;
 	
 	AbstractProgramObject(){
 	}
@@ -29,12 +39,60 @@ public abstract class AbstractProgramObject {
 		this.name     = name;
 		this.comments = "";
 		this.deleted  = false;
-		this.uid      = ProgramObjectFactory.getNewUID();
-				
+		this.uid      = ProgramObjectStore.storeAndGetUID(this);
 	}
 	
-	public abstract String createDatabaseScript();
+
+
 	
+	// Code generation
+	public abstract String createDatabaseScript();
+
+	// Gui respresentation
+	public abstract Icon getIcon();
+	
+	protected abstract AbstractPOPanel<? extends AbstractProgramObject> createEditScreen();
+
+	public AbstractPOPanel<? extends AbstractProgramObject> getEditScreen(){
+		if (editScreen == null)
+			editScreen = createEditScreen();
+		
+		return editScreen;		
+	}
+
+	public ProgramObjectNode getObjectTreeNode(TreeObjectPanel tree){
+		if (objectTreeNode == null)
+			objectTreeNode = new ProgramObjectNode(tree, this);
+		
+		return objectTreeNode;
+	}
+	
+	public void notifyDefinitionUpdate(Object changeSource){
+		if (objectTreeNode != null && objectTreeNode != changeSource)
+			objectTreeNode.syncToObjectDefinition();
+		if (editScreen != null && editScreen != changeSource)
+			editScreen.reloadFromObjectDefinition();
+		if (TreeObjectPanel.singleton != null && TreeObjectPanel.singleton != changeSource)
+			TreeObjectPanel.singleton.refreshObjectList();	
+		
+	}
+	
+	public void cleanup() {
+		if (editScreen != null)
+			editScreen.closeFromObject();
+	}
+
+	// Storage markers
+	protected final static String blockMarkerStart = "\r\n#9(}z~@";
+	private   final static String commentsMarker   = blockMarkerStart + "START comments\r\n";
+	private   final static String endMarker        = blockMarkerStart + "ENDDEF AbstractPO\r\n";
+	protected final static String subMarker1       = blockMarkerStart + "1\r\n";
+	protected final static String subMarker2       = blockMarkerStart + "2\r\n";
+	protected final static String subMarker3       = blockMarkerStart + "3\r\n";
+	protected final static String subMarker4       = blockMarkerStart + "4\r\n";
+	protected final static String subMarker5       = blockMarkerStart + "5\r\n";
+
+	// Write file
 	public String definitionAsLineFile(){
 		StringBuilder sb = new StringBuilder();
 		sb.append("Version  :1\r\n");
@@ -49,12 +107,43 @@ public abstract class AbstractProgramObject {
 		sb.append(specificDefinitionAsLineFile());
 		return sb.toString();
 	}
+	public void save(){
+		lastSavedFile = definitionAsLineFile();
+		Configuration.getActive().writeToFile(uid+".txt", lastSavedFile);
+	}
+	public void saveIfNotOpened() {
+		boolean isOpened = false;
+		JTabbedPane mainTabbedPane = MainWindow.frame.getMainTabbedPane();
+		for (int i=0; i<mainTabbedPane.getTabCount(); i++)
+			if (mainTabbedPane.getComponentAt(i) instanceof AbstractPOPanel){
+				AbstractPOPanel<?> panel = (AbstractPOPanel<?>) mainTabbedPane.getComponentAt(i);
+				isOpened |= panel.getProgramObjectBypassSync() == this;
+			}
+
+		if (!isOpened)
+			save();
+	}
+	
+	public void reload() {
+		if(hasChangesSinceLastSave()){
+			try {
+				loadFromFile(lastSavedFile);
+			} catch (StoredObjectParseException e) {
+			}
+			notifyDefinitionUpdate(this);
+		}				
+	}
+	
+	public boolean hasChangesSinceLastSave(){
+		return lastSavedFile == null || !lastSavedFile.equals(definitionAsLineFile());
+	}
 	
 	protected abstract String specificDefinitionAsLineFile();
 	
 	
-	
-	void initFromLineFile(String data) throws StoredObjectParseException{
+	// Read file
+	void loadFromFile(String data) throws StoredObjectParseException{
+		lastSavedFile = data;
 		String abstractPOData = getMarkedData(data, endMarker, true);
 		String specificPOData = getMarkedData(data, endMarker, false);
 		
@@ -113,6 +202,9 @@ public abstract class AbstractProgramObject {
 		classType = class_;
 	}	
 	
+	protected abstract void specificInitFromLineFile(String data) throws StoredObjectParseException;
+	
+	// Read file parse helper methods
 	protected String getMarkedData(String data, String marker, boolean before){
 		String result;
 		int i = data.indexOf(marker);
@@ -129,7 +221,7 @@ public abstract class AbstractProgramObject {
 	}
 	protected Map<String, String> parseValueMap(String data){
 		return parseValueMap(data, "\n", ":");
-	}
+	}	
 	protected Map<String, String> parseValueMap(String data, String lineDelim, String wordDelim) {
 		Map<String, String> result = new HashMap<String, String>();
 		String [] dataTokens = data.split(lineDelim);
@@ -142,6 +234,20 @@ public abstract class AbstractProgramObject {
 		return result;
 	}
 
-	protected abstract void specificInitFromLineFile(String data) throws StoredObjectParseException;
 	
+	public boolean isValid(){
+		return getObjectInvalidStatusMessages().size() == 0;
+	}	
+	public List<String> getObjectInvalidStatusMessages(){
+		List<String> result = new ArrayList<String>();
+		if (name == null || name.trim().length() == 0)
+			result.add("Object name is of zero length.");			
+		
+		fillObjectInvalidStatusMessages(result);
+		return result;
+	}
+
+	protected abstract void fillObjectInvalidStatusMessages(List<String> result);
+
+
 }

@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Set;
 
 import mn.dbtk.sql.ParseSQLHelper.ExpressionAliasPair;
+import mn.dbtk.sql.dbcache.DBObjectCache;
+import mn.dbtk.sql.dbcache.DBObjectsModelColumn;
+import mn.dbtk.sql.dbcache.DBObjectsModelRowSource;
 import mn.dbtk.util.MultiSet;
 
 
@@ -30,8 +33,8 @@ public class ParsedSQLStatement {
 		parseWarnings = new ArrayList<String>();
 		parseErrors   = new ArrayList<String>();
 		
-		if(!DBObjectCache.cache.isLoaded(true)){
-			parseErrors.add("Cache could not be loaded. "+DBObjectCache.cache.lastException);
+		if(!DBObjectCache.cache.isLoaded()){
+			parseErrors.add("Cache could not be loaded. "+DBObjectCache.cache.getLastException());
 			return;
 		}
 		
@@ -127,7 +130,7 @@ public class ParsedSQLStatement {
 				
 				boolean hasAggregate = false;
 				
-				for (String func: DBObjectCache.cache.aggregateFunctions)
+				for (String func: DBObjectCache.cache.getAggregateFunctions())
 					hasAggregate |= ParseSQLHelper.expressionContainsVariable(singlepair.expression, func, false, false);
 				
 				result.add(new SelectEntry(singlepair, !hasAggregate));
@@ -498,6 +501,9 @@ public class ParsedSQLStatement {
 				getClauseListIndexesForTableAlias(tableAlias).size()!=0);
 	}
 	public void removeFromTableList(String tableAlias, boolean cascade) {
+		if (getTableColumnIndex(tableAlias) == -1)
+			return;
+		
 		if (cascade){
 			List<Integer> selectIndexes = getSelectListIndexesForTableAlias(tableAlias);
 			Collections.sort(selectIndexes);

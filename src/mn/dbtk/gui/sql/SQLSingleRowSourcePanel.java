@@ -19,13 +19,14 @@ import javax.swing.JToggleButton;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
+import mn.dbtk.gui.generics.IconProvider;
 import mn.dbtk.gui.generics.MyJListBase;
-import mn.dbtk.sql.DBObjectCache;
-import mn.dbtk.sql.DBObjectsModelColumn;
-import mn.dbtk.sql.DBObjectsModelRowSource;
 import mn.dbtk.sql.ParseSQLHelper;
 import mn.dbtk.sql.ParsedSQLStatement.SelectEntry;
 import mn.dbtk.sql.ParsedSQLStatement.TableEntry;
+import mn.dbtk.sql.dbcache.DBObjectCache;
+import mn.dbtk.sql.dbcache.DBObjectsModelColumn;
+import mn.dbtk.sql.dbcache.DBObjectsModelRowSource;
 
 public class SQLSingleRowSourcePanel extends JPanel{
 	final static String QUERY_RESULT_NAME =  "QUERY SELECT LIST";
@@ -89,7 +90,7 @@ public class SQLSingleRowSourcePanel extends JPanel{
 			head.add(getHeadGuiInputTable(), BorderLayout.CENTER);
 		
 		
-		expandButton = new JToggleButton("expand", expanded);
+		expandButton = IconProvider.getToggleButton("expand", "collapse", expanded, "View/hide columns for this rowsource.");
 		head.add(expandButton, BorderLayout.EAST);
 		this.add(head, BorderLayout.NORTH);
 		

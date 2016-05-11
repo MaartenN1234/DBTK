@@ -57,7 +57,7 @@ public class MultiSet<K, V> extends HashMap<K, Set<V>> {
      * @param key key of the pair that needs to be removed
      * @param value value of the pair that needs to be removed
 	 */
-	public void remove(K key, V value) {
+	public void removeSingle(K key, V value) {
 		Set<V> entreeSet = get(key);
 		if (entreeSet != null){
 			entreeSet.remove(value);
