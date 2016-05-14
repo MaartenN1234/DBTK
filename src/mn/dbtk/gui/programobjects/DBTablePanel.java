@@ -3,21 +3,18 @@ package mn.dbtk.gui.programobjects;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import mn.dbtk.gui.main.MainWindowActionHandler;
 import mn.dbtk.programobjects.DBTableProgramObject;
 
 import java.awt.BorderLayout;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JRadioButton;
-import javax.swing.JTabbedPane;
 import javax.swing.JLabel;
 
 import java.awt.FlowLayout;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.util.List;
 
 public class DBTablePanel extends AbstractPOPanel<DBTableProgramObject> {
 

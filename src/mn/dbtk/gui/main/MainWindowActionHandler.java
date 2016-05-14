@@ -5,16 +5,13 @@ import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 
 import mn.dbtk.config.ConfigFile;
 import mn.dbtk.config.Configuration;
-import mn.dbtk.gui.objecttree.TreeObjectPanel;
 import mn.dbtk.gui.programobjects.AbstractPOPanel;
 import mn.dbtk.programobjects.AbstractProgramObject;
-import mn.dbtk.programobjects.DBTableProgramObject;
 import mn.dbtk.sql.SQLConnectionStatics;
 
 public class MainWindowActionHandler extends WindowAdapter {

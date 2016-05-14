@@ -11,17 +11,13 @@ import java.awt.dnd.DragGestureListener;
 import java.awt.dnd.DragSource;
 import java.awt.dnd.DropTargetAdapter;
 import java.awt.dnd.DropTargetDropEvent;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
-import mn.dbtk.gui.main.MainWindow;
 import mn.dbtk.gui.main.MainWindowActionHandler;
 import mn.dbtk.programobjects.AbstractProgramObject;
 import mn.dbtk.programobjects.ProgramObjectStore;

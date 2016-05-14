@@ -2,16 +2,8 @@ package mn.dbtk.config;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.logging.Logger;
-
-import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
-import javax.swing.JTextField;
-
-import mn.dbtk.config.Configuration.DBSchema;
-import mn.dbtk.config.Configuration.DBService;
 import mn.dbtk.gui.main.MainWindowActionHandler;
-import mn.dbtk.sql.SQLConnectionStatics;
 
 public class ConfigurationDialogActionHandler extends WindowAdapter {
 	private MainWindowActionHandler  windowHandler;

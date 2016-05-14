@@ -14,10 +14,8 @@ import mn.dbtk.gui.main.MainWindowActionHandler;
 
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Logger;
 import java.awt.event.ActionEvent;
 
 import javax.swing.JLabel;

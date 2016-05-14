@@ -7,7 +7,6 @@ import java.util.Map;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.logging.Logger;
 
 import mn.dbtk.programobjects.ProgramObjectStore;

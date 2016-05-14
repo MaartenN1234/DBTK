@@ -8,16 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
@@ -25,15 +19,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableModel;
@@ -41,10 +30,7 @@ import javax.swing.table.TableModel;
 import mn.dbtk.gui.generics.IconProvider;
 import mn.dbtk.gui.generics.MyJTable;
 import mn.dbtk.programobjects.DBTableProgramObject;
-import mn.dbtk.sql.dbcache.DBObjectCache;
 import mn.dbtk.sql.dbcache.DBObjectsModelColumn;
-import mn.dbtk.sql.dbcache.DBObjectsModelRowSource;
-
 import javax.swing.JCheckBox;
 
 public class DBTableInternalSubPanel extends JPanel {
@@ -341,7 +327,7 @@ public class DBTableInternalSubPanel extends JPanel {
 		String tableNameNew = safeName(programObject.name);
 		boolean hasChanges = programObject.type != getTableType() ||
 							 programObject.isFullAuditType != chckbxFullAufitTrail.isSelected() ||
-							 !programObject.tableName.equals(tableNameNew);
+							 programObject.tableName== null  || !programObject.tableName.equals(tableNameNew);
 		
 		programObject.type            = getTableType();
 		programObject.isFullAuditType = chckbxFullAufitTrail.isSelected();

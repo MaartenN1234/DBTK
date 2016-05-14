@@ -1,7 +1,5 @@
 package mn.dbtk.sql.dbcache;
 
-import java.io.Serializable;
-
 import mn.dbtk.programobjects.StoredObjectParseException;
 
 public class DBObjectsModelColumn  {

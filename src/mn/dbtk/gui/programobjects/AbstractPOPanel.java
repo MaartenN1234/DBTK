@@ -2,17 +2,11 @@ package mn.dbtk.gui.programobjects;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-
-import mn.dbtk.config.Configuration;
 import mn.dbtk.gui.generics.MyTabbedJPanel;
 import mn.dbtk.gui.generics.MyTextAreaBase;
 import mn.dbtk.gui.generics.TimeOutThread;
 import mn.dbtk.gui.main.MainWindow;
-import mn.dbtk.gui.main.MainWindowActionHandler;
 import mn.dbtk.programobjects.AbstractProgramObject;
-import mn.dbtk.programobjects.ProgramObjectStore;
 import mn.dbtk.sql.SQLConnectionStatics;
 
 import java.awt.BorderLayout;
@@ -35,9 +29,7 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
-import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;

@@ -1,13 +1,8 @@
 package mn.dbtk.gui.sql;
 
-import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollPane;
-
 import mn.dbtk.sql.SQLConnectionStatics;
 
 public class SQLTestWindow extends JFrame implements WindowListener{
