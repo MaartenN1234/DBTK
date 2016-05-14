@@ -81,7 +81,6 @@ public class DBTableInternalSubPanel extends JPanel {
 		add(lblTableType, gbc_lblTableType);
 		
 		rdbtnNoDate = new JRadioButton("No date");
-		rdbtnNoDate.setSelected(true);
 		rdbtnNoDate.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
 				updateGrid(false);
@@ -311,28 +310,34 @@ public class DBTableInternalSubPanel extends JPanel {
 	}
 
 	public void reloadFromObjectDefinitionSub() {
+		propagateChange = false;
 		chckbxFullAufitTrail.setSelected(programObject.isFullAuditType);
 		
 		switch(programObject.type){
 			case DBTableProgramObject.TYPE_MEAS:
-				rdbtnSingleDate.setEnabled(true);
+				rdbtnSingleDate.setSelected(true);
 				break;
 			case DBTableProgramObject.TYPE_TEMPORAL:
-				rdbtnDateRange.setEnabled(true);
+				rdbtnDateRange.setSelected(true);
 				break;
 			case DBTableProgramObject.TYPE_DEFAULT:
-				rdbtnNoDate.setEnabled(true);
+				rdbtnNoDate.setSelected(true);
 				break;
 		}
 		
 		updateGrid(false);
 		// TODO indices
+		
+		propagateChange = true;
 	}
 
 	private static String safeName(String input){
 		return input.toUpperCase().replace(" ","_").substring(0,29< input.length() ? 29 :  input.length());
 	}
 	public boolean fillProgramObjectFromFormSub() {
+		if (!propagateChange)
+			return false;
+		
 		String tableNameNew = safeName(programObject.name);
 		boolean hasChanges = programObject.type != getTableType() ||
 							 programObject.isFullAuditType != chckbxFullAufitTrail.isSelected() ||

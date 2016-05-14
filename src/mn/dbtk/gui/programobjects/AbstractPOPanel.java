@@ -55,6 +55,7 @@ public abstract class AbstractPOPanel<E extends AbstractProgramObject> extends M
 	protected MyTextAreaBase objectCommentsArea;
 	protected MyTextAreaBase objectInvalidArea;
 
+	protected boolean propagateChange = true;
 
 	
 	/**
@@ -62,6 +63,7 @@ public abstract class AbstractPOPanel<E extends AbstractProgramObject> extends M
 	 */
 	public AbstractPOPanel(E programObject) {
 		super(MainWindow.frame.getMainTabbedPane());
+		propagateChange = false;
 		this.programObject = programObject;
 		setLayout(new BorderLayout(0, 0));
 		add(sharedTopPanel(), BorderLayout.NORTH);
@@ -240,6 +242,7 @@ public abstract class AbstractPOPanel<E extends AbstractProgramObject> extends M
 	}
 
 	public void reloadFromObjectDefinition() {
+		propagateChange = false;
 		objectNameTextField.setText(programObject.name);
 		objectLocationTextField.setText(programObject.location);
 		objectCommentsArea.setText(programObject.comments);
@@ -249,6 +252,7 @@ public abstract class AbstractPOPanel<E extends AbstractProgramObject> extends M
 		reloadFromObjectDefinitionSub();
 		updateValidStatus();
 		validate();
+		propagateChange = true;
 		
 	}
 
@@ -301,6 +305,9 @@ public abstract class AbstractPOPanel<E extends AbstractProgramObject> extends M
 	}
 	
 	protected void fillProgramObjectFromForm() {
+		if (!propagateChange)
+			return;
+		
 		boolean hasChanges = !objectNameTextField.getText().equals(programObject.name) ||
 							 !objectLocationTextField.getText().equals(programObject.location) ||
 							 !objectCommentsArea.getText().equals(programObject.comments);

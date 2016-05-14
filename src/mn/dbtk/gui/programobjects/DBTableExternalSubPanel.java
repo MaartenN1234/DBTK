@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.TableModel;
 
 public class DBTableExternalSubPanel extends JPanel {
-	private DBTablePanel         masterPanel;
 	private MyJTable             columnGrid;
 	private JRadioButton         rdbtnNoDate;
 	private JRadioButton         rdbtnSingleDate;
@@ -54,7 +53,6 @@ public class DBTableExternalSubPanel extends JPanel {
 	 * Create the panel.
 	 */
 	public DBTableExternalSubPanel(DBTablePanel masterPanel) {
-		this.masterPanel             = masterPanel;
 		programObject = masterPanel.getProgramObjectBypassSync();
 		init();
 	}
@@ -438,6 +436,9 @@ public class DBTableExternalSubPanel extends JPanel {
 	}
 
 	public boolean fillProgramObjectFromFormSub() {
+		if (!propagateChange)
+			return false;
+		
 		messageLabel.setText("");
 		boolean hasChanges = programObject.tableName == null ||
 							!programObject.tableName.equals((String) selectingTable.getSelectedItem()) ||

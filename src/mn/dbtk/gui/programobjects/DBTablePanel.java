@@ -116,6 +116,9 @@ public class DBTablePanel extends AbstractPOPanel<DBTableProgramObject> {
 	}
 
 	protected boolean fillProgramObjectFromFormSub() {
+		if (!propagateChange)
+			return false;
+		
 		boolean hasChanges    = (programObject.isInternalType == isInternal);
 		boolean subHasChanges = false;
 		programObject.isInternalType = isInternal;
