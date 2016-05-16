@@ -68,11 +68,11 @@ public class DBObjectsModelColumn  {
 			return TYPE_NORMAL;
 		if (s.equals("KEY"))
 			return TYPE_NORMAL_PK;
-		if (s.equals("DATE"))
+		if (s.equals("DATE") || s.equals("VALUE_TIME"))
 			return TYPE_DATE;
-		if (s.equals("START_DATE"))
+		if (s.equals("START_DATE") || s.equals("START_VALUE_TIME"))
 			return TYPE_START_DATE;
-		if (s.equals("END_DATE"))
+		if (s.equals("END_DATE") || s.equals("END_VALUE_TIME"))
 			return TYPE_END_DATE;
 		return TYPE_UNKNOWN;
 	}
@@ -83,11 +83,11 @@ public class DBObjectsModelColumn  {
 		case TYPE_NORMAL_PK:
 			return "KEY";
 		case TYPE_DATE:
-			return "DATE";
+			return "VALUE_TIME";
 		case TYPE_START_DATE:
-			return "START_DATE";
+			return "START_VALUE_TIME";
 		case TYPE_END_DATE:
-			return "END_DATE";
+			return "END_VALUE_TIME";
 		}
 		return "UNKNOWN";
 	}

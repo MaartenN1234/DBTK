@@ -185,9 +185,9 @@ public class DBTableExternalSubPanel extends JPanel {
 				);
 	}
 
-	private final Set<String> startDateOptions = new HashSet<String>(Arrays.asList("START_DATE","STARTDATE"));
-	private final Set<String> endDateOptions   = new HashSet<String>(Arrays.asList("END_DATE","ENDDATE"));
-	private final Set<String> measDateOption   = new HashSet<String>(Arrays.asList("V_DATE","VDATE"));
+	private final Set<String> startDateOptions = new HashSet<String>(Arrays.asList("START_DATE","STARTDATE","START_VALUE_TIME"));
+	private final Set<String> endDateOptions   = new HashSet<String>(Arrays.asList("END_DATE","ENDDATE","END_VALUE_TIME"));
+	private final Set<String> measDateOption   = new HashSet<String>(Arrays.asList("V_DATE","VDATE","VALUE_TIME"));
 	
 	protected void updateTableTypeRadioButtons() {
 		messageLabel.setText("");
@@ -203,7 +203,7 @@ public class DBTableExternalSubPanel extends JPanel {
 		
 		if (columns != null)
 			for(DBObjectsModelColumn column : columns)
-				if (column.dataType.equals("DATE")){
+				if (column.dataType.equals("VALUE_TIME")){
 					boolean isPK = column.specialType==DBObjectsModelColumn.TYPE_NORMAL_PK;
 					hasDateInPk |= isPK;
 					dateCount++;
@@ -249,7 +249,7 @@ public class DBTableExternalSubPanel extends JPanel {
 			rdbtnNoDate.setEnabled(true);
 			rdbtnSingleDate.setEnabled(true);
 			rdbtnDateRange.setEnabled(true);
-			if (tableNameSelected != null && !programObject.tableName.equals(tableNameSelected)){
+			if (tableNameSelected != null && programObject != null && !programObject.tableName.equals(tableNameSelected)){
 				if (hasVDate){
 					rdbtnSingleDate.getModel().setSelected(true);
 				} else if (hasSDate || hasEDate){
@@ -284,16 +284,16 @@ public class DBTableExternalSubPanel extends JPanel {
 			}
 		 };
 		JComboBox<String> tempCombo;
-		tempCombo = new JComboBox<String>(new String[]{"DATE", "KEY"});
+		tempCombo = new JComboBox<String>(new String[]{"VALUE_TIME", "KEY"});
 		tempCombo.addItemListener(tempListener);
 		DefaultCellEditor selectorDateKey    = new DefaultCellEditor(tempCombo);
-		tempCombo = new JComboBox<String>(new String[]{"DATE", "VALUE"});
+		tempCombo = new JComboBox<String>(new String[]{"VALUE_TIME", "VALUE"});
 		tempCombo.addItemListener(tempListener);
 		DefaultCellEditor selectorDateValue    = new DefaultCellEditor(tempCombo);
-		tempCombo = new JComboBox<String>(new String[]{"START_DATE", "END_DATE", "KEY"});
+		tempCombo = new JComboBox<String>(new String[]{"START_VALUE_TIME", "END_VALUE_TIME", "KEY"});
 		tempCombo.addItemListener(tempListener);
 		DefaultCellEditor selectorRDateKey    = new DefaultCellEditor(tempCombo);
-		tempCombo = new JComboBox<String>(new String[]{"START_DATE", "END_DATE", "VALUE"});
+		tempCombo = new JComboBox<String>(new String[]{"START_VALUE_TIME", "END_VALUE_TIME", "VALUE"});
 		tempCombo.addItemListener(tempListener);
 		DefaultCellEditor selectorRDateValue    = new DefaultCellEditor(tempCombo);
 
@@ -344,7 +344,7 @@ public class DBTableExternalSubPanel extends JPanel {
 								column.specialType==DBObjectsModelColumn.TYPE_START_DATE;
 				boolean hasFDATEAssigned = false;
 				boolean hasSDATEAssigned = false;
-				if (column.dataType.equals("DATE")){
+				if (column.dataType.equals("VALUE_TIME")){
 					if (tableType == DBTableProgramObject.TYPE_MEAS){
 						if (isPK){
 							cellEditor  = selectorDateKey;
@@ -355,7 +355,7 @@ public class DBTableExternalSubPanel extends JPanel {
 						}
 						
 						if (!hasFDATEAssigned && isPK){
-							assignValue = "DATE";
+							assignValue = "VALUE_TIME";
 							hasFDATEAssigned = true;
 						}
 						if (loadFromObject) assignValue = objectLookup.get(column.name);
@@ -370,11 +370,11 @@ public class DBTableExternalSubPanel extends JPanel {
 						}
 						
 						if (!hasFDATEAssigned && startDateOptions.contains(column.name.toUpperCase())){
-							assignValue = "START_DATE";
+							assignValue = "START_VALUE_TIME";
 							hasFDATEAssigned = true;
 						}
 						if (!hasSDATEAssigned && endDateOptions.contains(column.name.toUpperCase())){
-							assignValue = "END_DATE";
+							assignValue = "END_VALUE_TIME";
 							hasSDATEAssigned = true;
 						}					
 

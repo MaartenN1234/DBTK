@@ -208,8 +208,9 @@ public class DBTableInternalSubPanel extends JPanel {
 		tempCombo = new JComboBox<String>(new String[]{"START_DATE", "END_DATE", "KEY", "VALUE"});
 		tempCombo.addItemListener(tempItemListener);
 		DefaultCellEditor selectorRDateKeyValue    = new DefaultCellEditor(tempCombo);
-		tempCombo = new JComboBox<String>(new String[]{"FLOAT", "INTEGER", "DATE", "VARCHAR2"});
+		tempCombo = new JComboBox<String>(new String[]{"FLOAT", "INTEGER", "DATE", "VARCHAR2(1)", "VARCHAR2(3)", "VARCHAR2(5)", "VARCHAR2(30)", "VARCHAR2(100)", "VARCHAR2(4000)"});
 		tempCombo.addItemListener(tempItemListener);
+		tempCombo.setMaximumRowCount(10);
 		DefaultCellEditor selectorType    = new DefaultCellEditor(tempCombo);
 		
 		
@@ -225,38 +226,38 @@ public class DBTableInternalSubPanel extends JPanel {
 			DefaultCellEditor cellEditorAssign = selectorKeyValue;
 			String dataType                    = column.dataType.toUpperCase();
 			String specialType                 = column.specialTypeAsString();
-			if (dataType.equals("CHAR") || dataType.equals("VARCHAR"))
-				dataType ="VARCHAR2";
+			if (dataType.equals("CHAR") || dataType.equals("VARCHAR")|| dataType.equals("VARCHAR2"))
+				dataType ="VARCHAR2(4000)";
 			
-			if (column.dataType.equals("DATE")){
+			if (column.dataType.equals("VALUE_TIME")){
 				if (tableType == DBTableProgramObject.TYPE_MEAS){
 					cellEditorAssign  = selectorDateKeyValue;
-					if (specialType.equals("START_DATE") || specialType.equals("END_DATE")){
-						specialType = "DATE";
+					if (specialType.equals("START_VALUE_TIME") || specialType.equals("END_VALUE_TIME")){
+						specialType = "VALUE_TIME";
 					}
 				} else if  (tableType == DBTableProgramObject.TYPE_TEMPORAL){
 					cellEditorAssign  = selectorRDateKeyValue;
-					if (specialType.equals("DATE") ){
-						specialType = "START_DATE";
+					if (specialType.equals("VALUE_TIME") ){
+						specialType = "START_VALUE_TIME";
 					}
 				} else {
-					if (specialType.equals("START_DATE") || specialType.equals("END_DATE") ||specialType.equals("DATE")){
-						specialType = "VALUE";
+					if (specialType.equals("START_VALUE_TIME") || specialType.equals("END_VALUE_TIME") ||specialType.equals("VALUE_TIME")){
+						specialType = "VALUE_TIME";
 					}
 				}
 			} else {
-				if (specialType.equals("START_DATE") || specialType.equals("END_DATE") ||specialType.equals("DATE")){
-					specialType = "VALUE";
+				if (specialType.equals("START_VALUE_TIME") || specialType.equals("END_VALUE_TIME") ||specialType.equals("VALUE_TIME")){
+					specialType = "VALUE_TIME";
 				}
 			}
 			
-			JButton deleteButton = IconProvider.getButton("delete", "Delete column");
+			JButton deleteButton = IconProvider.getButton("delete_small", "Delete column");
 			Object [] rowData = new Object[]{deleteButton, column.name, dataType, specialType};
 			allRows.add(rowData);
 			editors.add(cellEditorAssign);
 		}
 
-		JButton addButton = IconProvider.getButton("add", "Add column");
+		JButton addButton = IconProvider.getButton("add_small", "Add column");
 		Object [] rowData = new Object[]{addButton, "", "FLOAT", "VALUE"};
 		allRows.add(rowData);
 		editors.add(selectorKeyValue);
