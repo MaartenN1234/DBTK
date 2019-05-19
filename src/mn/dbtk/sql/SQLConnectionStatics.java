@@ -49,6 +49,7 @@ public class SQLConnectionStatics {
 			}
 			result = DriverManager.getConnection
 					("jdbc:oracle:thin:@//"+host+":"+port+"/"+service, user, pass);
+			result.setAutoCommit (false);
 		} catch (SQLException e){
 			throw new SQLException("Connection failed. " + e.getMessage());
 		}

@@ -208,7 +208,7 @@ public class DBTableInternalSubPanel extends JPanel {
 		tempCombo = new JComboBox<String>(new String[]{"START_DATE", "END_DATE", "KEY", "VALUE"});
 		tempCombo.addItemListener(tempItemListener);
 		DefaultCellEditor selectorRDateKeyValue    = new DefaultCellEditor(tempCombo);
-		tempCombo = new JComboBox<String>(new String[]{"FLOAT", "INTEGER", "DATE", "VARCHAR2(1)", "VARCHAR2(3)", "VARCHAR2(5)", "VARCHAR2(30)", "VARCHAR2(100)", "VARCHAR2(4000)"});
+		tempCombo = new JComboBox<String>(new String[]{"FLOAT", "INTEGER", "DATE", "VARCHAR2(1)", "VARCHAR2(5)", "VARCHAR2(30)", "VARCHAR2(100)", "VARCHAR2(MAX)"});
 		tempCombo.addItemListener(tempItemListener);
 		tempCombo.setMaximumRowCount(10);
 		DefaultCellEditor selectorType    = new DefaultCellEditor(tempCombo);
